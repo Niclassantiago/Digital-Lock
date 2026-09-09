@@ -199,7 +199,7 @@ Cada etapa tiene que dejar el mod **compilando y corriendo**. Después de cada
 etapa hacer commit y avisar al usuario para que teste.
 
 - **Etapa 1** ✅ — Setup + ítem candado registrado (sin lógica)
-- **Etapa 2** — Data Attachment `LockData` + aplicar candado con shift+click derecho (sin PIN)
+- **Etapa 2** ✅ — Data Attachment `LockData` + aplicar candado con shift+click derecho (sin PIN)
 - **Etapa 3** — Renderer del indicador verde/rojo + sync S2C
 - **Etapa 4** — GUI para setear PIN (botón inyectado en `AbstractContainerScreen`)
 - **Etapa 5** — Control de acceso: owner directo, otros van a la GUI de PIN
