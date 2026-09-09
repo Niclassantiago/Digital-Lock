@@ -51,6 +51,10 @@ public final class LockRenderer {
     private static final RenderType RT_BODY = RenderType.entityCutoutNoCull(BODY_TEX);
     private static final RenderType RT_METAL = RenderType.entityCutoutNoCull(METAL_TEX);
 
+    // Escala global del candado (1.0 = medio bloque de ancho). 0.72 lo deja
+    // en ~0.36 de ancho, el tamaño del candado plano anterior.
+    private static final float SCALE = 0.72f;
+
     // Cajas del candado en coords de bloque [0..1], autoradas mirando al SUR (+Z)
     // y sobresaliendo de la cara (z > 1). Formato: {x0, y0, z0, x1, y1, z1}.
     private static final float U = 1f / 16f;
@@ -90,6 +94,12 @@ public final class LockRenderer {
             pose.pushPose();
             pose.translate(pos.getX() - cam.x, pos.getY() - cam.y, pos.getZ() - cam.z);
             orient(pose, facing);
+
+            // Achicar el candado alrededor del centro de la cara (x,y = 0.5;
+            // z = 1.0, la cara del bloque), manteniéndolo centrado y pegado.
+            pose.translate(0.5, 0.5, 1.0);
+            pose.scale(SCALE, SCALE, SCALE);
+            pose.translate(-0.5, -0.5, -1.0);
 
             drawBox(buffers.getBuffer(RT_BODY), pose, BODY, light);
             VertexConsumer metal = buffers.getBuffer(RT_METAL);
