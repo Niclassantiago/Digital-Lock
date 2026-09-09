@@ -1,0 +1,14 @@
+{
+  "item.digitallock.digital_padlock": "Candado Digital",
+
+  "message.digitallock.applied": "Candado aplicado. Abre el contenedor para establecer un PIN.",
+  "message.digitallock.already_locked": "Este contenedor ya tiene un candado.",
+
+  "digitallock.configuration.title": "Configuración de Digital Lock",
+  "digitallock.configuration.section.digitallock.common.toml": "Configuración de Digital Lock",
+  "digitallock.configuration.section.digitallock.common.toml.title": "Configuración de Digital Lock",
+  "digitallock.configuration.items": "Lista de objetos",
+  "digitallock.configuration.logDirtBlock": "Registrar bloque de tierra",
+  "digitallock.configuration.magicNumberIntroduction": "Texto del número mágico",
+  "digitallock.configuration.magicNumber": "Número mágico"
+}

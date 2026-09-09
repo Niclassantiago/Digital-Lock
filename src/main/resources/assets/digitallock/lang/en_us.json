@@ -1,0 +1,14 @@
+{
+  "item.digitallock.digital_padlock": "Digital Padlock",
+
+  "message.digitallock.applied": "Padlock applied. Open the container to set a PIN.",
+  "message.digitallock.already_locked": "This container already has a padlock.",
+
+  "digitallock.configuration.title": "Digital Lock Configs",
+  "digitallock.configuration.section.digitallock.common.toml": "Digital Lock Configs",
+  "digitallock.configuration.section.digitallock.common.toml.title": "Digital Lock Configs",
+  "digitallock.configuration.items": "Item List",
+  "digitallock.configuration.logDirtBlock": "Log Dirt Block",
+  "digitallock.configuration.magicNumberIntroduction": "Magic Number Text",
+  "digitallock.configuration.magicNumber": "Magic Number"
+}
