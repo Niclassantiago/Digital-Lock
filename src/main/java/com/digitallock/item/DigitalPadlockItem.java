@@ -2,10 +2,12 @@ package com.digitallock.item;
 
 import com.digitallock.data.LockAccess;
 import com.digitallock.data.LockData;
+import com.digitallock.network.LockSync;
 import com.digitallock.registry.ModDataAttachments;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -74,6 +76,10 @@ public class DigitalPadlockItem extends Item {
         // persista en NBT.
         be.setData(ModDataAttachments.LOCK_DATA.get(), LockData.freshUnlocked(level.getGameTime()));
         be.setChanged();
+
+        // Sincronizar a los clientes que trackean el chunk para que dibujen el
+        // candado sobre la cara del bloque.
+        LockSync.sendToTrackers((ServerLevel) level, pos);
 
         // Consumir el ítem salvo en creativo.
         if (!player.getAbilities().instabuild) {

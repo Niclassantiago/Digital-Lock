@@ -103,12 +103,17 @@ trampa y barriles.
 - `PistonEvent.Pre` → cancelar si el push/pull afecta un bloque bloqueado
   (previene dupe rompiendo el bloque de soporte).
 
-### 5. Indicador visual
+### 5. Candado en la cara del bloque (decisión revisada por Niclas)
 
-- Overlay **client-side** vía `RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS`.
-- Billboard con el ícono del candado sobre el bloque, verde si `pinHash.isEmpty()`,
-  rojo si tiene PIN.
-- Alimentado por sync S2C del `LockData`.
+- Render **client-side** vía `RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS`.
+- Se dibuja el **candado real sobre la cara frontal** (`FACING`) del cofre /
+  barril, **no** un indicador/billboard flotante. La idea del indicador
+  verde-rojo queda **descartada**.
+- Alimentado por sync S2C del `LockData` (`LockSyncPacket`) + `ChunkWatchEvent.Sent`
+  al cargarle el chunk al jugador. Cache client-side en `LockClientCache`.
+- Texturas provistas por el autor. Hasta que lleguen, placeholder con la textura
+  del ítem. La distinción de estado (sin PIN vs con PIN) se resolverá con las
+  texturas definitivas (mirando `LockData.hasPin()`).
 
 ### 6. Cofres dobles
 
@@ -188,7 +193,7 @@ src/main/java/com/digitallock/
     │   ├── PinSetupScreen.java
     │   └── PinEntryScreen.java
     └── render/
-        └── LockIndicatorRenderer.java
+        └── LockRenderer.java             # dibuja el candado sobre la cara del bloque
 ```
 
 ---
