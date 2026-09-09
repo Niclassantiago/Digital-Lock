@@ -1,5 +1,6 @@
 package com.digitallock.client.render;
 
+import java.util.List;
 import java.util.Map;
 
 import com.digitallock.DigitalLock;
@@ -7,16 +8,20 @@ import com.digitallock.client.LockClientCache;
 import com.digitallock.data.LockData;
 import com.digitallock.registry.ModItems;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.ChestBlock;
@@ -32,12 +37,10 @@ import net.neoforged.neoforge.event.level.LevelEvent;
  * Dibuja el candado sobre la cara frontal ({@code FACING}) de cada cofre /
  * barril bloqueado conocido por el cliente ({@link LockClientCache}).
  *
- * <p>El candado <b>es el modelo del ítem</b> extruído a 3D (el sprite del autor
- * convertido en objeto con volumen, igual que un ítem en la mano). Así el
- * candado del mundo es literalmente la imagen del autor. Se achica y se le da
- * un poco de profundidad extra para que se note el relieve.
- *
- * <p>Un solo estado visual (sin PIN y con PIN se ven igual, por decisión del autor).
+ * <p>El candado <b>es el modelo del ítem</b> (el sprite del autor extruído a 3D
+ * por {@code item/generated}) renderizado a mano con {@code putBulkData} sobre
+ * el atlas de bloques. Así el candado del mundo es literalmente la imagen del
+ * autor con volumen. Un solo estado visual (sin PIN y con PIN se ven igual).
  */
 @EventBusSubscriber(modid = DigitalLock.MODID, value = Dist.CLIENT)
 public final class LockRenderer {
@@ -45,8 +48,11 @@ public final class LockRenderer {
 
     // Ajustes de tamaño/posición (fáciles de tunear a ojo con un screenshot):
     private static final float SCALE = 0.22f;   // ancho/alto del candado (fracción de bloque)
-    private static final float ZSCALE = 1.4f;   // exagera la profundidad para que se vea 3D
+    private static final float ZSCALE = 1.0f;   // profundidad (relieve 3D)
     private static final float FACE_Z = 0.47f;  // qué tan afuera del centro se apoya (0.5 = cara del cubo)
+
+    private static final RandomSource RANDOM = RandomSource.create();
+    private static final RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS);
 
     @SubscribeEvent
     public static void onRenderLevel(RenderLevelStageEvent event) {
@@ -63,10 +69,16 @@ public final class LockRenderer {
             return;
         }
 
-        ItemStack stack = new ItemStack(ModItems.DIGITAL_PADLOCK.get());
+        // Modelo del ítem = sprite del autor extruído a 3D.
+        BakedModel model = mc.getItemRenderer().getItemModelShaper().getItemModel(ModItems.DIGITAL_PADLOCK.get());
+        if (model == null) {
+            return;
+        }
+
         Vec3 cam = event.getCamera().getPosition();
         PoseStack pose = event.getPoseStack();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
+        VertexConsumer vc = buffers.getBuffer(RENDER_TYPE);
 
         for (Map.Entry<BlockPos, LockData> entry : locks.entrySet()) {
             BlockPos pos = entry.getKey();
@@ -85,13 +97,28 @@ public final class LockRenderer {
             pose.scale(SCALE, SCALE, ZSCALE);    // achicar en X/Y, dar profundidad en Z
             pose.translate(-0.5, -0.5, -0.5);    // centrar el modelo del ítem (autorado en 0..1)
 
-            mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, light,
-                    OverlayTexture.NO_OVERLAY, pose, buffers, level, 0);
+            renderModel(vc, pose, model, light);
 
             pose.popPose();
         }
 
-        buffers.endBatch();
+        buffers.endBatch(RENDER_TYPE);
+    }
+
+    private static void renderModel(VertexConsumer vc, PoseStack pose, BakedModel model, int light) {
+        PoseStack.Pose last = pose.last();
+        for (Direction dir : Direction.values()) {
+            RANDOM.setSeed(42L);
+            List<BakedQuad> quads = model.getQuads(null, dir, RANDOM);
+            for (BakedQuad quad : quads) {
+                vc.putBulkData(last, quad, 1f, 1f, 1f, 1f, light, OverlayTexture.NO_OVERLAY);
+            }
+        }
+        RANDOM.setSeed(42L);
+        List<BakedQuad> quads = model.getQuads(null, null, RANDOM);
+        for (BakedQuad quad : quads) {
+            vc.putBulkData(last, quad, 1f, 1f, 1f, 1f, light, OverlayTexture.NO_OVERLAY);
+        }
     }
 
     /** Limpia el cache al descargar el nivel (cambio de dimensión / desconexión). */
