@@ -111,9 +111,11 @@ trampa y barriles.
   verde-rojo queda **descartada**.
 - Alimentado por sync S2C del `LockData` (`LockSyncPacket`) + `ChunkWatchEvent.Sent`
   al cargarle el chunk al jugador. Cache client-side en `LockClientCache`.
-- Texturas provistas por el autor. Hasta que lleguen, placeholder con la textura
-  del ítem. La distinción de estado (sin PIN vs con PIN) se resolverá con las
-  texturas definitivas (mirando `LockData.hasPin()`).
+- El modelo 3D es el **sprite del ítem extruído** (vía `ItemRenderer.renderStatic`):
+  el candado del mundo es literalmente la imagen del autor con volumen. Se achica
+  y se le da profundidad extra. **Un solo estado** visual (sin PIN y con PIN se
+  ven igual, por decisión del autor). Tamaño/posición se tunean con las constantes
+  `SCALE`/`ZSCALE`/`FACE_Z` en `LockRenderer`.
 
 ### 6. Cofres dobles
 
