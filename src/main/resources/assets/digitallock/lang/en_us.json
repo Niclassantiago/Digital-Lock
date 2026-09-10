@@ -19,5 +19,8 @@
   "digitallock.configuration.wrongPinDamage": "Wrong PIN damage",
   "digitallock.configuration.supportedBlocks": "Supported blocks",
   "digitallock.configuration.adminBypass": "Admin (OP) bypass",
-  "digitallock.configuration.dropLockOnRemove": "Drop lock on remove"
+  "digitallock.configuration.dropLockOnRemove": "Drop lock on remove",
+
+  "advancement.digitallock.digital_padlock.title": "You Graduated, Champ",
+  "advancement.digitallock.digital_padlock.description": "Craft your first Digital Padlock."
 }

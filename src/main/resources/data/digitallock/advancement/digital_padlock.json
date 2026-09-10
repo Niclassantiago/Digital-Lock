@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "id": "digitallock:digital_padlock"
+    },
+    "title": {
+      "translate": "advancement.digitallock.digital_padlock.title"
+    },
+    "description": {
+      "translate": "advancement.digitallock.digital_padlock.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "craft_padlock": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "digitallock:digital_padlock"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "craft_padlock"
+    ]
+  ]
+}
