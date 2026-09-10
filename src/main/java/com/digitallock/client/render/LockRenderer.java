@@ -26,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -88,10 +89,28 @@ public final class LockRenderer {
             if (facing == null) {
                 continue; // el bloque ya no es un cofre/barril (roto, chunk sin cargar, etc.)
             }
+
+            // Cofre doble: dibujar UN solo candado centrado en el par. La mitad
+            // LEFT dibuja por las dos (corrida media casilla hacia la otra mitad);
+            // la RIGHT solo dibuja si su LEFT no está en el cache.
+            double sideX = 0.0;
+            double sideZ = 0.0;
+            if (state.getBlock() instanceof ChestBlock && state.hasProperty(ChestBlock.TYPE)) {
+                ChestType type = state.getValue(ChestBlock.TYPE);
+                if (type != ChestType.SINGLE) {
+                    Direction toPartner = ChestBlock.getConnectedDirection(state);
+                    if (type == ChestType.RIGHT && locks.containsKey(pos.relative(toPartner))) {
+                        continue; // la mitad LEFT ya lo dibuja
+                    }
+                    sideX = toPartner.getStepX() * 0.5;
+                    sideZ = toPartner.getStepZ() * 0.5;
+                }
+            }
+
             int light = LevelRenderer.getLightColor(level, pos.relative(facing));
 
             pose.pushPose();
-            pose.translate(pos.getX() - cam.x, pos.getY() - cam.y, pos.getZ() - cam.z);
+            pose.translate(pos.getX() - cam.x + sideX, pos.getY() - cam.y, pos.getZ() - cam.z + sideZ);
             pose.translate(0.5, 0.5 + VERT, 0.5); // centro del bloque, un poco más abajo
             rotateToFace(pose, facing);          // +Z local -> facing
             pose.translate(0.0, 0.0, FACE_Z);    // sacar hacia la cara
