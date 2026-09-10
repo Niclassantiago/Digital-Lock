@@ -7,9 +7,9 @@ import java.util.UUID;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.Util;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
@@ -48,8 +48,8 @@ public record LockData(
             Codec.LONG.fieldOf("createdAt").forGetter(LockData::createdAt)
     ).apply(instance, LockData::new));
 
-    /** StreamCodec para sincronizar al cliente (se empieza a usar en la Etapa 3). */
-    public static final StreamCodec<ByteBuf, LockData> STREAM_CODEC = StreamCodec.composite(
+    /** StreamCodec para sincronizar al cliente. */
+    public static final StreamCodec<RegistryFriendlyByteBuf, LockData> STREAM_CODEC = StreamCodec.composite(
             UUIDUtil.STREAM_CODEC, LockData::ownerId,
             ByteBufCodecs.optional(ByteBufCodecs.BYTE_ARRAY), LockData::pinHash,
             ByteBufCodecs.optional(ByteBufCodecs.BYTE_ARRAY), LockData::salt,
