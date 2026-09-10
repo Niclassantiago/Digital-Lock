@@ -30,6 +30,7 @@ public final class LockManager {
         be.setData(ModDataAttachments.LOCK_DATA.get(),
                 new LockData(owner, Optional.of(hash), Optional.of(salt), createdAt));
         be.setChanged();
+        level.invalidateCapabilities(pos); // el PIN corta el item handler -> refrescar hoppers
         LockSync.sendToTrackers(level, pos);
     }
 
@@ -41,6 +42,7 @@ public final class LockManager {
         }
         be.removeData(ModDataAttachments.LOCK_DATA.get());
         be.setChanged();
+        level.invalidateCapabilities(pos); // vuelve a habilitar el item handler vanilla
         LockSession.invalidate(pos);
         LockSync.sendToTrackers(level, pos); // data vacía -> el cliente lo remueve
         return true;
