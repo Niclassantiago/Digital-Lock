@@ -50,6 +50,7 @@ public final class LockRenderer {
     private static final float SCALE = 0.22f;   // ancho/alto del candado (fracción de bloque)
     private static final float ZSCALE = 1.0f;   // profundidad (relieve 3D)
     private static final float FACE_Z = 0.47f;  // qué tan afuera del centro se apoya (0.5 = cara del cubo)
+    private static final float VERT = -0.13f;   // desplazamiento vertical (negativo = más abajo)
 
     private static final RandomSource RANDOM = RandomSource.create();
     private static final RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS);
@@ -91,7 +92,7 @@ public final class LockRenderer {
 
             pose.pushPose();
             pose.translate(pos.getX() - cam.x, pos.getY() - cam.y, pos.getZ() - cam.z);
-            pose.translate(0.5, 0.5, 0.5);      // centro del bloque
+            pose.translate(0.5, 0.5 + VERT, 0.5); // centro del bloque, un poco más abajo
             rotateToFace(pose, facing);          // +Z local -> facing
             pose.translate(0.0, 0.0, FACE_Z);    // sacar hacia la cara
             pose.scale(SCALE, SCALE, ZSCALE);    // achicar en X/Y, dar profundidad en Z
