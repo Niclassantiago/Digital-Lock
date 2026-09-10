@@ -207,15 +207,15 @@ etapa hacer commit y avisar al usuario para que teste.
 
 - **Etapa 1** ✅ — Setup + ítem candado registrado (sin lógica)
 - **Etapa 2** ✅ — Data Attachment `LockData` + aplicar candado con shift+click derecho (sin PIN)
-- **Etapa 3** — Renderer del indicador verde/rojo + sync S2C
-- **Etapa 4** — GUI para setear PIN (botón inyectado en `AbstractContainerScreen`)
-- **Etapa 5** — Control de acceso: owner directo, otros van a la GUI de PIN
-- **Etapa 6** — GUI para ingresar PIN + daño por PIN incorrecto
-- **Etapa 7** — Botón para quitar candado (owner o sesión validada)
-- **Etapa 8** — Protecciones pasivas (hoppers via capability, explosiones, pistones, rotura)
-- **Etapa 9** — Cofres dobles (sincronizar halves)
-- **Etapa 10** — Trapped chests + barriles en la whitelist
-- **Etapa 11** — Config file + receta del candado + polish
+- **Etapa 3** ✅ — Candado 3D sobre la cara del bloque + sync S2C (reemplazó al indicador)
+- **Etapa 4** ✅ — GUI para setear PIN (botón inyectado en `AbstractContainerScreen`)
+- **Etapa 5** ✅ — Control de acceso: owner directo, otros van a la GUI de PIN
+- **Etapa 6** ✅ — GUI para ingresar PIN + daño por PIN incorrecto
+- **Etapa 7** ✅ — Botón para quitar candado (owner o sesión validada)
+- **Etapa 8** ✅ — Protecciones pasivas (hoppers via capability, explosiones, pistones, rotura)
+- **Etapa 9** ✅ — Cofres dobles (sincronizar halves)
+- **Etapa 10** ✅ — Trapped chests + barriles en la whitelist
+- **Etapa 11** ✅ — Config file + receta del candado + polish
 
 ---
 
