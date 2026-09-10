@@ -14,6 +14,8 @@ import com.digitallock.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -49,6 +51,7 @@ public final class ServerPayloadHandler {
             return;
         }
         LockManager.applyPin(level, pos, player.getUUID(), pin);
+        level.playSound(null, pos, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 0.7f, 1.3f);
     }
 
     public static void handleSubmitPin(SubmitPinPacket packet, IPayloadContext ctx) {
@@ -76,9 +79,11 @@ public final class ServerPayloadHandler {
         if (ok) {
             // Validar ambas mitades del cofre doble para esta sesión.
             LockManager.forEachHalf(level, pos, half -> LockSession.validate(player.getUUID(), half));
+            level.playSound(null, pos, SoundEvents.IRON_DOOR_OPEN, SoundSource.BLOCKS, 0.7f, 1.2f);
             openContainer(player, level, pos, state);
         } else {
             player.hurt(ModDamageTypes.wrongPin(level), (float) (double) ModConfig.WRONG_PIN_DAMAGE.get());
+            level.playSound(null, pos, SoundEvents.DISPENSER_FAIL, SoundSource.BLOCKS, 0.8f, 0.8f);
         }
     }
 
@@ -95,10 +100,13 @@ public final class ServerPayloadHandler {
         if (be == null || !LockAccess.canRemove(player, level, pos)) {
             return;
         }
-        if (LockManager.removeLock(level, pos) && ModConfig.DROP_LOCK_ON_REMOVE.get()) {
-            ItemStack stack = new ItemStack(ModItems.DIGITAL_PADLOCK.get());
-            if (!player.addItem(stack)) {
-                player.drop(stack, false);
+        if (LockManager.removeLock(level, pos)) {
+            level.playSound(null, pos, SoundEvents.CHAIN_BREAK, SoundSource.BLOCKS, 0.8f, 1.0f);
+            if (ModConfig.DROP_LOCK_ON_REMOVE.get()) {
+                ItemStack stack = new ItemStack(ModItems.DIGITAL_PADLOCK.get());
+                if (!player.addItem(stack)) {
+                    player.drop(stack, false);
+                }
             }
         }
     }

@@ -7,6 +7,8 @@ import com.digitallock.data.LockManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -70,6 +72,7 @@ public class DigitalPadlockItem extends Item {
         // Adjuntar el candado sin PIN (a ambas mitades si es cofre doble),
         // persistir y sincronizar a los clientes que trackean el chunk.
         LockManager.applyLock((ServerLevel) level, pos);
+        level.playSound(null, pos, SoundEvents.CHAIN_PLACE, SoundSource.BLOCKS, 0.8f, 1.2f);
 
         // Consumir el ítem salvo en creativo.
         if (!player.getAbilities().instabuild) {

@@ -10,6 +10,8 @@ import com.digitallock.network.OpenPinScreenPacket;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -58,6 +60,7 @@ public final class LockInteractEvents {
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.SUCCESS);
         if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.playNotifySound(SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 0.6f, 1.0f);
             PacketDistributor.sendToPlayer(serverPlayer, new OpenPinScreenPacket(pos.immutable()));
         }
     }
