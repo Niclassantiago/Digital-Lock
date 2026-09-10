@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import com.digitallock.registry.ModDataAttachments;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
@@ -32,5 +34,46 @@ public final class LockAccess {
     /** True si el BE tiene un candado aplicado (con o sin PIN). */
     public static boolean hasLock(BlockEntity be) {
         return be != null && be.hasData(ModDataAttachments.LOCK_DATA.get());
+    }
+
+    /**
+     * True si {@code player} está autorizado sobre un candado <b>con PIN</b>:
+     * admin OP (bypass), dueño, o validado en sesión.
+     */
+    public static boolean isAuthorized(Player player, BlockPos pos, LockData lock) {
+        if (player.hasPermissions(2)) {
+            return true; // bypass de moderación (configurable en Etapa 11)
+        }
+        if (lock.isOwner(player.getUUID())) {
+            return true;
+        }
+        return LockSession.isValidated(player.getUUID(), pos);
+    }
+
+    /** True si {@code player} puede abrir el contenedor directamente. */
+    public static boolean canOpen(Player player, BlockEntity be) {
+        Optional<LockData> lock = getLock(be);
+        if (lock.isEmpty() || !lock.get().hasPin()) {
+            return true; // sin candado, o candado sin PIN -> abierto para todos
+        }
+        return isAuthorized(player, be.getBlockPos(), lock.get());
+    }
+
+    /** True si {@code player} puede setear el PIN (hay candado y todavía no tiene PIN). */
+    public static boolean canSetPin(Player player, BlockEntity be) {
+        Optional<LockData> lock = getLock(be);
+        return lock.isPresent() && !lock.get().hasPin();
+    }
+
+    /** True si {@code player} puede quitar el candado. */
+    public static boolean canRemove(Player player, BlockEntity be) {
+        Optional<LockData> lock = getLock(be);
+        if (lock.isEmpty()) {
+            return false;
+        }
+        if (!lock.get().hasPin()) {
+            return true; // sin PIN: cualquiera que lo aplicó puede sacarlo
+        }
+        return isAuthorized(player, be.getBlockPos(), lock.get());
     }
 }

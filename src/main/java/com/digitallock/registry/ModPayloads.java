@@ -3,6 +3,8 @@ package com.digitallock.registry;
 import com.digitallock.DigitalLock;
 import com.digitallock.client.LockClientCache;
 import com.digitallock.network.LockSyncPacket;
+import com.digitallock.network.ServerPayloadHandler;
+import com.digitallock.network.SetPinPacket;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -28,5 +30,11 @@ public final class ModPayloads {
                 LockSyncPacket.TYPE,
                 LockSyncPacket.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> LockClientCache.handle(payload)));
+
+        // C2S: setear el PIN (validado server-side).
+        registrar.playToServer(
+                SetPinPacket.TYPE,
+                SetPinPacket.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> ServerPayloadHandler.handleSetPin(payload, context)));
     }
 }
