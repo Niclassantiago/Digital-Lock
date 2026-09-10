@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.ChestBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -48,11 +47,7 @@ public final class LockInteractEvents {
         if (player.isSecondaryUseActive() && !player.getItemInHand(event.getHand()).isEmpty()) {
             return;
         }
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be == null) {
-            return;
-        }
-        Optional<LockData> lock = LockAccess.getLock(be);
+        Optional<LockData> lock = LockAccess.getEffectiveLock(level, pos);
         if (lock.isEmpty() || !lock.get().hasPin()) {
             return; // sin candado o sin PIN -> abrir normal
         }

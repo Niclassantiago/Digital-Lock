@@ -50,7 +50,7 @@ public final class ServerPayloadHandler {
         }
         ServerLevel level = player.serverLevel();
         BlockEntity be = level.getBlockEntity(pos);
-        if (be == null || !LockAccess.canSetPin(player, be)) {
+        if (be == null || !LockAccess.canSetPin(player, level, pos)) {
             return;
         }
         LockManager.applyPin(level, pos, player.getUUID(), pin);
@@ -70,11 +70,7 @@ public final class ServerPayloadHandler {
         }
         ServerLevel level = player.serverLevel();
         BlockState state = level.getBlockState(pos);
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be == null) {
-            return;
-        }
-        Optional<LockData> lock = LockAccess.getLock(be);
+        Optional<LockData> lock = LockAccess.getEffectiveLock(level, pos);
         if (lock.isEmpty() || !lock.get().hasPin()) {
             openContainer(player, level, pos, state); // ya no está bloqueado
             return;
@@ -83,7 +79,8 @@ public final class ServerPayloadHandler {
         boolean ok = data.salt().isPresent() && data.pinHash().isPresent()
                 && PinHasher.verify(pin, data.salt().get(), data.pinHash().get());
         if (ok) {
-            LockSession.validate(player.getUUID(), pos);
+            // Validar ambas mitades del cofre doble para esta sesión.
+            LockManager.forEachHalf(level, pos, half -> LockSession.validate(player.getUUID(), half));
             openContainer(player, level, pos, state);
         } else {
             player.hurt(ModDamageTypes.wrongPin(level), WRONG_PIN_DAMAGE);
@@ -100,7 +97,7 @@ public final class ServerPayloadHandler {
         }
         ServerLevel level = player.serverLevel();
         BlockEntity be = level.getBlockEntity(pos);
-        if (be == null || !LockAccess.canRemove(player, be)) {
+        if (be == null || !LockAccess.canRemove(player, level, pos)) {
             return;
         }
         if (LockManager.removeLock(level, pos) && DROP_LOCK_ITEM) {

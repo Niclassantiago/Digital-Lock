@@ -6,9 +6,9 @@ import com.digitallock.data.LockData;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -19,6 +19,8 @@ import net.neoforged.neoforge.event.level.PistonEvent;
 /**
  * Protecciones pasivas de un candado con PIN: rotura, explosión y pistón.
  * Los hoppers/automatización se cortan por capability ({@link CapabilityHandler}).
+ * Todas las lecturas usan {@code getEffectiveLock} para cubrir ambas mitades de
+ * un cofre doble.
  */
 @EventBusSubscriber(modid = DigitalLock.MODID)
 public final class LockProtectionEvents {
@@ -30,8 +32,7 @@ public final class LockProtectionEvents {
         if (event.getLevel().isClientSide()) {
             return;
         }
-        BlockEntity be = event.getLevel().getBlockEntity(event.getPos());
-        LockData lock = pinLock(be);
+        LockData lock = pinLock(event.getLevel(), event.getPos());
         if (lock == null) {
             return;
         }
@@ -45,7 +46,7 @@ public final class LockProtectionEvents {
     @SubscribeEvent
     public static void onExplosion(ExplosionEvent.Detonate event) {
         Level level = event.getLevel();
-        event.getAffectedBlocks().removeIf(pos -> pinLock(level.getBlockEntity(pos)) != null);
+        event.getAffectedBlocks().removeIf(pos -> pinLock(level, pos) != null);
     }
 
     /** Los pistones no pueden mover ni destruir un bloque bloqueado (anti-dupe). */
@@ -55,26 +56,26 @@ public final class LockProtectionEvents {
         PistonStructureResolver helper = event.getStructureHelper();
         if (helper != null && helper.resolve()) {
             for (BlockPos pos : helper.getToPush()) {
-                if (pinLock(level.getBlockEntity(pos)) != null) {
+                if (pinLock(level, pos) != null) {
                     event.setCanceled(true);
                     return;
                 }
             }
             for (BlockPos pos : helper.getToDestroy()) {
-                if (pinLock(level.getBlockEntity(pos)) != null) {
+                if (pinLock(level, pos) != null) {
                     event.setCanceled(true);
                     return;
                 }
             }
         }
         // Bloque adyacente a la cara (caso pull de pistón pegajoso).
-        if (pinLock(level.getBlockEntity(event.getFaceOffsetPos())) != null) {
+        if (pinLock(level, event.getFaceOffsetPos()) != null) {
             event.setCanceled(true);
         }
     }
 
-    /** Devuelve el {@link LockData} si el BE tiene candado con PIN, o null. */
-    private static LockData pinLock(BlockEntity be) {
-        return LockAccess.getLock(be).filter(LockData::hasPin).orElse(null);
+    /** Devuelve el {@link LockData} si {@code pos} tiene candado con PIN (mirando ambas mitades), o null. */
+    private static LockData pinLock(BlockGetter level, BlockPos pos) {
+        return LockAccess.getEffectiveLock(level, pos).filter(LockData::hasPin).orElse(null);
     }
 }

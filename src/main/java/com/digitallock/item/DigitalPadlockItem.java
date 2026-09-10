@@ -1,9 +1,7 @@
 package com.digitallock.item;
 
 import com.digitallock.data.LockAccess;
-import com.digitallock.data.LockData;
-import com.digitallock.network.LockSync;
-import com.digitallock.registry.ModDataAttachments;
+import com.digitallock.data.LockManager;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -20,13 +18,11 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Ítem candado digital. Con Shift + click derecho sobre un cofre, cofre trampa
- * o barril, adjunta un {@link LockData} sin PIN al BlockEntity vanilla del
- * bloque y consume el ítem.
+ * o barril, adjunta un candado sin PIN al BlockEntity vanilla del bloque
+ * (ambas mitades si es cofre doble) y consume el ítem.
  *
- * <p><b>Etapa 2:</b> solo aplica el candado (sin PIN). El PIN, la GUI y las
- * protecciones llegan en etapas posteriores. La whitelist de bloques está
- * hardcodeada por ahora (pasa a config en la Etapa 11) y solo se escribe la
- * mitad clickeada de un cofre doble (la sincronización de halves es Etapa 9).
+ * <p>La whitelist de bloques está hardcodeada por ahora (pasa a config en la
+ * Etapa 11).
  */
 public class DigitalPadlockItem extends Item {
 
@@ -66,20 +62,15 @@ public class DigitalPadlockItem extends Item {
             return InteractionResult.PASS;
         }
 
-        // Ya tiene candado: avisar y no gastar el ítem.
-        if (LockAccess.hasLock(be)) {
+        // Ya tiene candado (mirando ambas mitades): avisar y no gastar el ítem.
+        if (LockAccess.getEffectiveLock(level, pos).isPresent()) {
             player.displayClientMessage(Component.translatable("message.digitallock.already_locked"), true);
             return InteractionResult.CONSUME;
         }
 
-        // Adjuntar el candado sin PIN y marcar el BE como modificado para que
-        // persista en NBT.
-        be.setData(ModDataAttachments.LOCK_DATA.get(), LockData.freshUnlocked(level.getGameTime()));
-        be.setChanged();
-
-        // Sincronizar a los clientes que trackean el chunk para que dibujen el
-        // candado sobre la cara del bloque.
-        LockSync.sendToTrackers((ServerLevel) level, pos);
+        // Adjuntar el candado sin PIN (a ambas mitades si es cofre doble),
+        // persistir y sincronizar a los clientes que trackean el chunk.
+        LockManager.applyLock((ServerLevel) level, pos);
 
         // Consumir el ítem salvo en creativo.
         if (!player.getAbilities().instabuild) {

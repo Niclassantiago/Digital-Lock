@@ -27,7 +27,7 @@ public final class CapabilityHandler {
         event.registerBlock(
                 Capabilities.ItemHandler.BLOCK,
                 (level, pos, state, be, side) -> {
-                    if (be != null && LockAccess.getLock(be).map(LockData::hasPin).orElse(false)) {
+                    if (LockAccess.getEffectiveLock(level, pos).map(LockData::hasPin).orElse(false)) {
                         return EmptyItemHandler.INSTANCE;
                     }
                     return null; // sin candado / sin PIN -> delega en el handler vanilla
