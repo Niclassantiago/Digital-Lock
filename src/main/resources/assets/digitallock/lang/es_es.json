@@ -16,8 +16,8 @@
   "digitallock.configuration.title": "Configuración de Digital Lock",
   "digitallock.configuration.section.digitallock.common.toml": "Configuración de Digital Lock",
   "digitallock.configuration.section.digitallock.common.toml.title": "Configuración de Digital Lock",
-  "digitallock.configuration.items": "Lista de objetos",
-  "digitallock.configuration.logDirtBlock": "Registrar bloque de tierra",
-  "digitallock.configuration.magicNumberIntroduction": "Texto del número mágico",
-  "digitallock.configuration.magicNumber": "Número mágico"
+  "digitallock.configuration.wrongPinDamage": "Daño por PIN incorrecto",
+  "digitallock.configuration.supportedBlocks": "Bloques soportados",
+  "digitallock.configuration.adminBypass": "Bypass de admin (OP)",
+  "digitallock.configuration.dropLockOnRemove": "Devolver candado al quitarlo"
 }

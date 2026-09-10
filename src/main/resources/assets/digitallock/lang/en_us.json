@@ -16,8 +16,8 @@
   "digitallock.configuration.title": "Digital Lock Configs",
   "digitallock.configuration.section.digitallock.common.toml": "Digital Lock Configs",
   "digitallock.configuration.section.digitallock.common.toml.title": "Digital Lock Configs",
-  "digitallock.configuration.items": "Item List",
-  "digitallock.configuration.logDirtBlock": "Log Dirt Block",
-  "digitallock.configuration.magicNumberIntroduction": "Magic Number Text",
-  "digitallock.configuration.magicNumber": "Magic Number"
+  "digitallock.configuration.wrongPinDamage": "Wrong PIN damage",
+  "digitallock.configuration.supportedBlocks": "Supported blocks",
+  "digitallock.configuration.adminBypass": "Admin (OP) bypass",
+  "digitallock.configuration.dropLockOnRemove": "Drop lock on remove"
 }

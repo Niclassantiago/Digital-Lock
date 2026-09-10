@@ -31,9 +31,8 @@ public class DigitalLock {
         // Agregar el candado a una pestaña creativa vanilla
         modEventBus.addListener(this::addCreative);
 
-        // Config de ejemplo heredada del generator. Se reemplaza por la config
-        // real del mod en la Etapa 11.
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        // Config común del mod.
+        modContainer.registerConfig(ModConfig.Type.COMMON, com.digitallock.config.ModConfig.SPEC);
 
         LOGGER.info("Digital Lock inicializado");
     }

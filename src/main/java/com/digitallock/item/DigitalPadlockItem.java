@@ -1,5 +1,6 @@
 package com.digitallock.item;
 
+import com.digitallock.config.ModConfig;
 import com.digitallock.data.LockAccess;
 import com.digitallock.data.LockManager;
 
@@ -11,8 +12,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -81,9 +80,8 @@ public class DigitalPadlockItem extends Item {
         return InteractionResult.CONSUME;
     }
 
-    /** Bloques soportados. Hardcodeado por ahora; pasa a config en la Etapa 11. */
+    /** Bloques soportados (whitelist de config). */
     private static boolean isSupported(BlockState state) {
-        Block block = state.getBlock();
-        return block == Blocks.CHEST || block == Blocks.TRAPPED_CHEST || block == Blocks.BARREL;
+        return ModConfig.isSupported(state);
     }
 }

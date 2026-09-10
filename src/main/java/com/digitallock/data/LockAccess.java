@@ -2,6 +2,7 @@ package com.digitallock.data;
 
 import java.util.Optional;
 
+import com.digitallock.config.ModConfig;
 import com.digitallock.registry.ModDataAttachments;
 
 import net.minecraft.core.BlockPos;
@@ -66,8 +67,8 @@ public final class LockAccess {
      * admin OP (bypass), dueño, o validado en sesión.
      */
     public static boolean isAuthorized(Player player, BlockPos pos, LockData lock) {
-        if (player.hasPermissions(2)) {
-            return true; // bypass de moderación (configurable en Etapa 11)
+        if (ModConfig.ADMIN_BYPASS.get() && player.hasPermissions(2)) {
+            return true; // bypass de moderación (configurable)
         }
         if (lock.isOwner(player.getUUID())) {
             return true;

@@ -2,6 +2,7 @@ package com.digitallock.network;
 
 import java.util.Optional;
 
+import com.digitallock.config.ModConfig;
 import com.digitallock.data.LockAccess;
 import com.digitallock.data.LockData;
 import com.digitallock.data.LockManager;
@@ -29,12 +30,6 @@ public final class ServerPayloadHandler {
 
     /** Distancia máxima (al cuadrado) para aceptar una acción sobre un bloque. */
     private static final double REACH_SQR = 64.0; // 8 bloques
-
-    /** Daño por PIN incorrecto (2 corazones). Pasa a config en la Etapa 11. */
-    private static final float WRONG_PIN_DAMAGE = 4.0f;
-
-    /** Si al quitar el candado se devuelve el ítem. Pasa a config en la Etapa 11. */
-    private static final boolean DROP_LOCK_ITEM = true;
 
     public static void handleSetPin(SetPinPacket packet, IPayloadContext ctx) {
         if (!(ctx.player() instanceof ServerPlayer player)) {
@@ -83,7 +78,7 @@ public final class ServerPayloadHandler {
             LockManager.forEachHalf(level, pos, half -> LockSession.validate(player.getUUID(), half));
             openContainer(player, level, pos, state);
         } else {
-            player.hurt(ModDamageTypes.wrongPin(level), WRONG_PIN_DAMAGE);
+            player.hurt(ModDamageTypes.wrongPin(level), (float) (double) ModConfig.WRONG_PIN_DAMAGE.get());
         }
     }
 
@@ -100,7 +95,7 @@ public final class ServerPayloadHandler {
         if (be == null || !LockAccess.canRemove(player, level, pos)) {
             return;
         }
-        if (LockManager.removeLock(level, pos) && DROP_LOCK_ITEM) {
+        if (LockManager.removeLock(level, pos) && ModConfig.DROP_LOCK_ON_REMOVE.get()) {
             ItemStack stack = new ItemStack(ModItems.DIGITAL_PADLOCK.get());
             if (!player.addItem(stack)) {
                 player.drop(stack, false);
