@@ -4,11 +4,12 @@
   "pattern": [
     " I ",
     "IRI",
-    " I "
+    " C "
   ],
   "key": {
     "I": { "item": "minecraft:iron_ingot" },
-    "R": { "item": "minecraft:redstone" }
+    "R": { "item": "minecraft:redstone" },
+    "C": { "item": "minecraft:copper_ingot" }
   },
   "result": {
     "id": "digitallock:digital_padlock",
