@@ -19,8 +19,5 @@
   "digitallock.configuration.wrongPinDamage": "Daño por PIN incorrecto",
   "digitallock.configuration.supportedBlocks": "Bloques soportados",
   "digitallock.configuration.adminBypass": "Bypass de admin (OP)",
-  "digitallock.configuration.dropLockOnRemove": "Devolver candado al quitarlo",
-
-  "advancement.digitallock.digital_padlock.title": "Te recibiste de wachin",
-  "advancement.digitallock.digital_padlock.description": "Crafteaste tu primer Candado Digital. Ahora guardá tranquilo."
+  "digitallock.configuration.dropLockOnRemove": "Devolver candado al quitarlo"
 }

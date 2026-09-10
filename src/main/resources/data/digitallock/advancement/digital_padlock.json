@@ -4,14 +4,14 @@
       "id": "digitallock:digital_padlock"
     },
     "title": {
-      "translate": "advancement.digitallock.digital_padlock.title"
+      "text": "El cofre cerrado, pero el orto bien abierto"
     },
     "description": {
-      "translate": "advancement.digitallock.digital_padlock.description"
+      "text": "Crafteaste tu primer Candado Digital."
     },
-    "frame": "goal",
+    "frame": "challenge",
     "show_toast": true,
-    "announce_to_chat": true,
+    "announce_to_chat": false,
     "hidden": false
   },
   "criteria": {
