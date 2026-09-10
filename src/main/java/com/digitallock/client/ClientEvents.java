@@ -3,6 +3,7 @@ package com.digitallock.client;
 import com.digitallock.DigitalLock;
 import com.digitallock.client.screen.PinSetupScreen;
 import com.digitallock.data.LockData;
+import com.digitallock.network.RemoveLockPacket;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -17,6 +18,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Eventos client-side de GUI: recuerda el último bloque candeable clickeado e
@@ -56,12 +58,19 @@ public final class ClientEvents {
         int x = screen.getGuiLeft() + screen.getXSize() + 4;
         int y = screen.getGuiTop();
 
+        // "Establecer PIN": solo si el candado todavía no tiene PIN.
         if (!lock.hasPin()) {
             event.addListener(Button.builder(
                             Component.translatable("screen.digitallock.set_pin_button"),
                             b -> Minecraft.getInstance().setScreen(new PinSetupScreen(pos)))
                     .bounds(x, y, 96, 20).build());
+            y += 24;
         }
-        // El botón "Quitar candado" se agrega en la Etapa 7.
+
+        // "Quitar candado": si el jugador ve el contenido, está autorizado a sacarlo.
+        event.addListener(Button.builder(
+                        Component.translatable("screen.digitallock.remove_button"),
+                        b -> PacketDistributor.sendToServer(new RemoveLockPacket(pos)))
+                .bounds(x, y, 96, 20).build());
     }
 }

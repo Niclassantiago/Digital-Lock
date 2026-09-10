@@ -9,6 +9,7 @@
   "screen.digitallock.confirm": "Confirm",
   "screen.digitallock.set_pin_button": "Set PIN",
   "screen.digitallock.enter_pin": "Enter PIN",
+  "screen.digitallock.remove_button": "Remove lock",
 
   "death.attack.digitallock.wrong_pin": "%1$s entered a wrong PIN",
 

@@ -8,11 +8,13 @@ import com.digitallock.data.LockManager;
 import com.digitallock.data.LockSession;
 import com.digitallock.data.PinHasher;
 import com.digitallock.registry.ModDamageTypes;
+import com.digitallock.registry.ModItems;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -30,6 +32,9 @@ public final class ServerPayloadHandler {
 
     /** Daño por PIN incorrecto (2 corazones). Pasa a config en la Etapa 11. */
     private static final float WRONG_PIN_DAMAGE = 4.0f;
+
+    /** Si al quitar el candado se devuelve el ítem. Pasa a config en la Etapa 11. */
+    private static final boolean DROP_LOCK_ITEM = true;
 
     public static void handleSetPin(SetPinPacket packet, IPayloadContext ctx) {
         if (!(ctx.player() instanceof ServerPlayer player)) {
@@ -82,6 +87,27 @@ public final class ServerPayloadHandler {
             openContainer(player, level, pos, state);
         } else {
             player.hurt(ModDamageTypes.wrongPin(level), WRONG_PIN_DAMAGE);
+        }
+    }
+
+    public static void handleRemoveLock(RemoveLockPacket packet, IPayloadContext ctx) {
+        if (!(ctx.player() instanceof ServerPlayer player)) {
+            return;
+        }
+        BlockPos pos = packet.pos();
+        if (!inReach(player, pos)) {
+            return;
+        }
+        ServerLevel level = player.serverLevel();
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be == null || !LockAccess.canRemove(player, be)) {
+            return;
+        }
+        if (LockManager.removeLock(level, pos) && DROP_LOCK_ITEM) {
+            ItemStack stack = new ItemStack(ModItems.DIGITAL_PADLOCK.get());
+            if (!player.addItem(stack)) {
+                player.drop(stack, false);
+            }
         }
     }
 

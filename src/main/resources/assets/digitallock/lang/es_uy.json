@@ -9,6 +9,7 @@
   "screen.digitallock.confirm": "Confirmar",
   "screen.digitallock.set_pin_button": "Poner PIN",
   "screen.digitallock.enter_pin": "Ingresá el PIN",
+  "screen.digitallock.remove_button": "Quitar candado",
 
   "death.attack.digitallock.wrong_pin": "%1$s ingresó un PIN incorrecto",
 

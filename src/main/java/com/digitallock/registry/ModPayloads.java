@@ -5,6 +5,7 @@ import com.digitallock.client.ClientPayloadHandler;
 import com.digitallock.client.LockClientCache;
 import com.digitallock.network.LockSyncPacket;
 import com.digitallock.network.OpenPinScreenPacket;
+import com.digitallock.network.RemoveLockPacket;
 import com.digitallock.network.ServerPayloadHandler;
 import com.digitallock.network.SetPinPacket;
 import com.digitallock.network.SubmitPinPacket;
@@ -45,6 +46,12 @@ public final class ModPayloads {
                 SubmitPinPacket.TYPE,
                 SubmitPinPacket.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> ServerPayloadHandler.handleSubmitPin(payload, context)));
+
+        // C2S: quitar el candado.
+        registrar.playToServer(
+                RemoveLockPacket.TYPE,
+                RemoveLockPacket.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> ServerPayloadHandler.handleRemoveLock(payload, context)));
 
         // S2C: abrir la GUI de ingreso de PIN. El handler solo corre en el cliente.
         registrar.playToClient(
